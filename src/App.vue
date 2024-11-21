@@ -1,18 +1,26 @@
-<script setup></script>
+<script setup>
+import '@/assets/main.css'
+
+import { RouterView, RouterLink } from 'vue-router'
+</script>
+
 <template>
-  <header id="header">
-    <nav id="navigation">
-      <RouterLink :to="{ name: 'Habits' }"><h1>Habits</h1></RouterLink>
-      <RouterLink :to="{ name: 'Calendar' }"><h1>Calendar</h1></RouterLink>
+  <header class="header">
+    <nav class="navigation">
+      <RouterLink :to="{ name: 'Home' }" class="nav-link" active-class="active-link">
+        Home
+      </RouterLink>
+      <RouterLink :to="{ name: 'Habits' }" class="nav-link" active-class="active-link">
+        Habits
+      </RouterLink>
+      <RouterLink :to="{ name: 'Calendar' }" class="nav-link" active-class="active-link">
+        Calendar
+      </RouterLink>
     </nav>
   </header>
-
-  <RouterView />
+  <main class="main-content">
+    <RouterView />
+  </main>
 </template>
 
-<style scoped>
-#navigation {
-  display: flex;
-  justify-content: space-around;
-}
-</style>
+<style scoped></style>

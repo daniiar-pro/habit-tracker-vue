@@ -1,13 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HabitsView from '../views/habits/HabitsView.vue'
+import HomeView from '@/views/home/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'Home',
+      component: HomeView,
+    },
+    {
+      path: '/day/:date?',
       name: 'Habits',
-      component: HabitsView,
+      component: () => import('@/views/habits/HabitsView.vue'),
     },
     {
       path: '/calendar',
