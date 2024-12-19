@@ -1,6 +1,5 @@
 import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
-import eslintConfigAirbnb from '@vue/eslint-config-airbnb'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
 export default [
@@ -16,6 +15,5 @@ export default [
 
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
-  eslintConfigAirbnb,
   skipFormatting,
 ]

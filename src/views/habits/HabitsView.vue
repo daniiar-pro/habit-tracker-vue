@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import CurrentWeek from './CurrentWeek.vue'
-import HabitItem from '@/components/HabitItem.vue'
+import CurrentWeek from '../../components/CurrentWeek.vue'
+import HabitItem from '../../components/HabitItem.vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   habitsList,
@@ -12,21 +12,26 @@ import {
   handleStopHabit,
   deleteHabitGlobally,
   dates,
-} from '@/store/localStorage'
+  Habit,
+} from '../../store/localStorage'
 
 const route = useRoute()
 const router = useRouter()
 
 const habits = habitsList
-const habit = ref('')
-const selectedDate = ref(new Date().toISOString().slice(0, 10))
-const habitsForSelectedDate = ref([])
-const showModal = ref(false)
-const showEditModal = ref(false)
-const showStopModal = ref(false)
-const isInputInvalid = ref(false)
-const habitToEdit = ref(null)
-const habitToStop = ref(null)
+const habit = ref<string>('')
+const selectedDate = ref<string>(new Date().toISOString().slice(0, 10))
+const habitsForSelectedDate = ref<Habit[]>([])
+
+const habitToEdit = ref<Habit | null>(null)
+const habitToStop = ref<Habit | null>(null)
+
+
+const showModal = ref<boolean>(false)
+const showEditModal = ref<boolean>(false)
+const showStopModal = ref<boolean>(false)
+const isInputInvalid = ref<boolean>(false)
+
 
 
 
@@ -34,8 +39,8 @@ const habitToStop = ref(null)
 onMounted(() => {
   loadHabits()
 
-  const urlDate = route.params.date
-  const normalizedDate = urlDate || new Date().toISOString().slice(0, 10)
+  const urlDate = route.params.date as string | undefined
+  const normalizedDate: string =  urlDate || new Date().toISOString().slice(0, 10)
 
   if (!dates.value[normalizedDate]) {
     dates.value[normalizedDate] = getHabitsForDate(normalizedDate)
@@ -45,26 +50,33 @@ onMounted(() => {
   habitsForSelectedDate.value = dates.value[normalizedDate]
 })
 
+
+
 watch(
   () => route.params.date,
   (newDate) => {
-    if (newDate) {
-      const normalizedDate = new Date(newDate).toISOString().slice(0, 10)
-      selectedDate.value = normalizedDate
-      habitsForSelectedDate.value = getHabitsForDate(normalizedDate)
+    if (typeof newDate === 'string' && !isNaN(Date.parse(newDate))) {
+      const normalizedDate = new Date(newDate).toISOString().slice(0, 10);
+      selectedDate.value = normalizedDate;
+      habitsForSelectedDate.value = getHabitsForDate(normalizedDate);
+    } else {
+      console.warn(`Invalid or missing date in route.params.date: ${newDate}`);
+      const fallbackDate = new Date().toISOString().slice(0, 10); 
+      selectedDate.value = fallbackDate;
+      habitsForSelectedDate.value = getHabitsForDate(fallbackDate);
     }
   },
   { immediate: true },
-)
+);
 
-function handleSelectedDate(newDate) {
+function handleSelectedDate(newDate: string) {
   selectedDate.value = newDate
   habitsForSelectedDate.value = getHabitsForDate(newDate)
 
   router.push({ name: 'Habits', params: { date: newDate } })
 }
 
-const isFutureDate = computed(() => {
+const isFutureDate = computed<boolean>(() => {
   const today = new Date().toISOString().slice(0, 10)
   return selectedDate.value > today
 })
@@ -74,12 +86,12 @@ function openAddModal() {
   isInputInvalid.value = false
 }
 
-function openEditModal(habit) {
+function openEditModal(habit: Habit) {
   habitToEdit.value = habit
   showEditModal.value = true
 }
 
-function openStopModal(habit) {
+function openStopModal(habit: Habit) {
   habitToStop.value = habit
   showStopModal.value = true
 }
@@ -96,16 +108,15 @@ function addNewHabit() {
     return
   }
 
-  habits.value.push({
+  const newHabit = {
     title: habit.value.trim(),
     completed: false,
     date: selectedDate.value,
-  })
+  }
 
-  habitsForSelectedDate.value.push({
-    title: habit.value.trim(),
-    completed: false,
-  })
+  habits.value.push(newHabit);
+
+  habitsForSelectedDate.value.push(newHabit);
 
   habit.value = ''
   isInputInvalid.value = false
@@ -114,13 +125,13 @@ function addNewHabit() {
 }
 
 function editHabitTitle() {
-  if (!habitToEdit.value.title.trim()) {
+  if (!habitToEdit.value?.title.trim()) {
     isInputInvalid.value = true
     return
   }
 
   habitsForSelectedDate.value = habitsForSelectedDate.value.map((habit) =>
-    habit.title === habitToEdit.value.title ? habitToEdit.value : habit,
+    habit.title === habitToEdit.value!.title ? habitToEdit.value! : habit,
   )
 
   saveDates()
@@ -128,18 +139,18 @@ function editHabitTitle() {
 }
 
 function stopHabit() {
-  handleStopHabit(habitToStop.value.title, selectedDate.value)
+  handleStopHabit(habitToStop.value!.title, selectedDate.value)
   closeModal()
 }
 
-function deleteHabit(habitTitle) {
+function deleteHabit(habitTitle: string) {
   deleteHabitGlobally(habitTitle)
   habitsForSelectedDate.value = getHabitsForDate(selectedDate.value)
 
   saveDates()
 }
 
-function toggleCompleted(habitTitle) {
+function toggleCompleted(habitTitle: string) {
   toggleHabitCompletion(selectedDate.value, habitTitle)
   habitsForSelectedDate.value = getHabitsForDate(selectedDate.value)
 }
@@ -154,9 +165,9 @@ function toggleCompleted(habitTitle) {
     <br />
 
     <div class="habits-container" >
-      <HabitItem v-for="(habitItem, index) in habitsForSelectedDate" :key="habitItem.title" :title="habitItem.title"
+      <HabitItem v-for="(habitItem) in habitsForSelectedDate" :key="habitItem.title" :title="habitItem.title"
         :completed="habitItem.completed" :stopped="habitItem.stopped" :isFutureDate="isFutureDate"
-        @edit-habit="openEditModal(habitItem, index)" @delete-habit="deleteHabit(habitItem.title)"
+        @edit-habit="openEditModal(habitItem)" @delete-habit="deleteHabit(habitItem.title)"
         @toggle-completed="toggleCompleted(habitItem.title)" @stop-habit="openStopModal(habitItem)" />
 
 
@@ -166,7 +177,6 @@ function toggleCompleted(habitTitle) {
       <button @click="openAddModal">Add new habit</button>
     </div>
 
-    <!-- Add Modal -->
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h3>Add New Habit</h3>
@@ -180,8 +190,7 @@ function toggleCompleted(habitTitle) {
       </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div v-if="showEditModal" class="modal-overlay">
+    <div v-if="showEditModal && habitToEdit" class="modal-overlay">
       <div class="modal">
         <h3>Edit Habit</h3>
         <input type="text" v-model="habitToEdit.title" :class="{ 'input-invalid': isInputInvalid }"
@@ -194,7 +203,6 @@ function toggleCompleted(habitTitle) {
       </div>
     </div>
 
-    <!-- Stop Modal -->
     <div v-if="showStopModal" class="modal-overlay">
       <div class="modal">
         <h3>Stop Habit</h3>

@@ -1,20 +1,35 @@
-<script setup>
-const props = defineProps(['title', 'completed', 'stopped', 'isFutureDate'])
-const emit = defineEmits(['delete-habit', 'edit-habit', 'toggle-completed', 'stop-habit'])
+<script setup lang="ts">
 
-function handleCompleted() {
+interface Props {
+  title: string;
+  completed: boolean;
+  stopped?: boolean;
+  isFutureDate: boolean;
+}
+
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'delete-habit', title: string): void;
+  (e: 'edit-habit'): void;
+  (e: 'toggle-completed', title: string): void;
+  (e: 'stop-habit', title: string): void;
+}>();
+
+function handleCompleted():void {
   emit('toggle-completed', props.title)
 }
 
-function handleDelete() {
+function handleDelete():void {
   emit('delete-habit', props.title)
 }
 
-function handleStop() {
+function handleStop():void {
   emit('stop-habit', props.title)
 }
 
-function handleEdit() {
+function handleEdit():void {
   emit('edit-habit')
 }
 </script>

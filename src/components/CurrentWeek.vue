@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 
 const days = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
@@ -6,13 +6,22 @@ const today = new Date()
 const todayIndex = ref((today.getDay() + 6) % 7)
 const selectedDayIndex = ref(todayIndex.value)
 
-const props = defineProps(['selectedDate'])
-const emit = defineEmits(['update-day-selected'])
+import { defineProps, defineEmits } from 'vue';
+
+const props = defineProps<{ selectedDate: string }>(); 
+const emit = defineEmits<{
+  (e: 'update-day-selected', value: string): void; 
+}>();
+
+
 
 watch(
   () => props.selectedDate,
   (newDate) => {
     const selectedDate = new Date(newDate)
+    if(isNaN(selectedDate.getTime())){
+      return;
+    }
     const diffDays = Math.round(
       (selectedDate.setHours(0, 0, 0, 0) - today.setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24),
     )
@@ -21,7 +30,7 @@ watch(
   { immediate: true },
 )
 
-function selectDay(index) {
+function selectDay(index: number) {
   selectedDayIndex.value = index
   const selectedDate = new Date()
   const diff = index - todayIndex.value

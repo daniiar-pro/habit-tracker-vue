@@ -1,18 +1,35 @@
 import { ref, watch } from 'vue'
 
-export const habitsList = ref([])
-export const dates = ref({})
+export type Habit = {
+  title: string
+  completed: boolean
+  date: Date | string
+  stopped?: boolean
+}
+
+type DatesType = Record<string, Habit[]>
+
+export const habitsList = ref<Habit[]>([])
+export const dates = ref<DatesType>({})
 
 export function loadHabits() {
-  const storedHabits = JSON.parse(localStorage.getItem('habitsList') || '[]')
-  habitsList.value = storedHabits
+  try {
+    const storedHabits: Habit[] = JSON.parse(localStorage.getItem('habitsList') || '[]')
+    habitsList.value = storedHabits
+  } catch {
+    habitsList.value = []
+  }
 
-  const storedDates = JSON.parse(localStorage.getItem('dates') || '{}')
-  dates.value = storedDates || {}
+  try {
+    const storedDates: DatesType = JSON.parse(localStorage.getItem('dates') || '{}')
+    dates.value = storedDates || {}
+  } catch {
+    dates.value = {}
+  }
   watch(
     habitsList,
     (newHabits) => {
-      const habitsStore = newHabits.map((habit) => ({
+      const habitsStore = newHabits.map((habit: Habit) => ({
         title: habit.title,
         completed: habit.completed,
         date: habit.date,
@@ -37,21 +54,23 @@ export function saveDates() {
   localStorage.setItem('dates', JSON.stringify(dates.value))
 }
 
-export function handleStopHabit(habitTitle, selectedDate) {
-  const today = new Date()
-  const stopDate = new Date(selectedDate)
+export function handleStopHabit(habitTitle: string, selectedDate: string) {
+  const today: Date = new Date()
+  const stopDate: Date = new Date(selectedDate)
 
   for (let i = 0; i <= 365; i++) {
-    const currentDate = new Date(today)
+    const currentDate: Date = new Date(today)
     currentDate.setDate(today.getDate() + i)
 
-    const formattedDate = currentDate.toISOString().slice(0, 10)
+    const formattedDate: string = currentDate.toISOString().slice(0, 10)
 
     if (currentDate >= stopDate) {
       if (!dates.value[formattedDate]) {
         dates.value[formattedDate] = habitsList.value.map((habit) => ({
           title: habit.title,
           completed: false,
+          stopped: false,
+          date: formattedDate,
         }))
       }
 
@@ -66,7 +85,7 @@ export function handleStopHabit(habitTitle, selectedDate) {
   localStorage.setItem('dates', JSON.stringify(dates.value))
 }
 
-export function deleteHabitGlobally(habitTitle) {
+export function deleteHabitGlobally(habitTitle: string) {
   for (const date in dates.value) {
     dates.value[date] = dates.value[date].filter((habit) => habit.title !== habitTitle)
   }
@@ -78,9 +97,9 @@ export function deleteHabitGlobally(habitTitle) {
   localStorage.setItem('habitsList', JSON.stringify(habitsList.value))
 }
 
-export function getHabitsForDate(selectedDate) {
-  const today = new Date().toISOString().slice(0, 10)
-  const isFutureDate = selectedDate > today
+export function getHabitsForDate(selectedDate: string): Habit[] {
+  const today: string = new Date().toISOString().slice(0, 10)
+  const isFutureDate: boolean = selectedDate > today
 
   if (isFutureDate) {
     return (
@@ -88,6 +107,7 @@ export function getHabitsForDate(selectedDate) {
       habitsList.value.map((habit) => ({
         title: habit.title,
         completed: false,
+        date: selectedDate,
       }))
     )
   }
@@ -96,6 +116,7 @@ export function getHabitsForDate(selectedDate) {
     dates.value[selectedDate] = habitsList.value.map((habit) => ({
       title: habit.title,
       completed: false,
+      date: selectedDate,
     }))
     saveDates()
   }
@@ -103,12 +124,13 @@ export function getHabitsForDate(selectedDate) {
   return dates.value[selectedDate] || []
 }
 
-export function toggleHabitCompletion(selectedDate, habitTitle) {
+export function toggleHabitCompletion(selectedDate: string, habitTitle: string) {
   if (!dates.value[selectedDate]) {
     dates.value[selectedDate] = habitsList.value.map((habit) => ({
       title: habit.title,
       completed: false,
       stopped: habit.stopped || false,
+      date: selectedDate,
     }))
   }
 
@@ -119,3 +141,4 @@ export function toggleHabitCompletion(selectedDate, habitTitle) {
 
   saveDates()
 }
+

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import '@/assets/main.css'
 
 import { RouterView, RouterLink } from 'vue-router'

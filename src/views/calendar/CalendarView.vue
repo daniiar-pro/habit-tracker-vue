@@ -1,22 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { dates, getHabitsForDate, toggleHabitCompletion } from '@/store/localStorage'
+import { getHabitsForDate, Habit, toggleHabitCompletion } from '../../store/localStorage'
 import '@/components/HabitItem.vue'
 
 const router = useRouter()
 const route = useRoute()
 
-const format = (date) => {
+const format = (date: Date) => {
   const day = `${date.getDate()}`.padStart(2, '0')
   const month = `${date.getMonth() + 1}`.padStart(2, '0')
   const year = date.getFullYear()
   return `${year}-${month}-${day}`
 }
 
-const normalizeDate = (dateStr) => {
+const normalizeDate = (dateStr: string): string => {
   const parts = dateStr.split('-')
   if (parts.length === 3) {
     return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`
@@ -25,33 +25,33 @@ const normalizeDate = (dateStr) => {
 }
 
 const selectedDate = ref(
-  route.query.date ? normalizeDate(route.query.date) : new Date().toISOString().slice(0, 10),
+  typeof route.query.date === 'string' ? normalizeDate(route.query.date) : new Date().toISOString().slice(0, 10),
 )
 
 watch(
   () => route.query.date,
   (newDate) => {
-    selectedDate.value = normalizeDate(newDate || new Date().toISOString().slice(0, 10))
+    selectedDate.value = normalizeDate(newDate as string || new Date().toISOString().slice(0, 10))
   },
   { immediate: true },
 )
 
-const isFutureDate = computed(() => {
+const isFutureDate = computed<boolean>(() => {
   const today = new Date().toISOString().slice(0, 10)
   return selectedDate.value > today
 })
 
-const habitsForSelectedDate = computed(() => {
+const habitsForSelectedDate = computed<Habit[]>(() => {
   return getHabitsForDate(selectedDate.value)
 })
 
-const handleDateSelected = (newDate) => {
+const handleDateSelected = (newDate: Date) => {
   const isoDate = normalizeDate(new Date(newDate).toISOString().slice(0, 10))
   selectedDate.value = isoDate
   router.push({ name: 'Calendar', query: { date: isoDate } })
 }
 
-const handleToggleCompletion = (habitTitle) => {
+const handleToggleCompletion = (habitTitle: string) => {
   if (!isFutureDate.value) {
     toggleHabitCompletion(selectedDate.value, habitTitle)
   }

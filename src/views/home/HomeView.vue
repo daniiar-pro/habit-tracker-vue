@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-const userName = ref('')
-const welcomeMessage = ref('')
-const showModal = ref(false)
-const isInputInvalid = ref(false)
+const userName = ref<string>('')
+const welcomeMessage = ref<string>('')
+const showModal = ref<boolean>(false)
+const isInputInvalid = ref<boolean>(false)
 
 onMounted(() => {
   const storedName = localStorage.getItem('userName')
