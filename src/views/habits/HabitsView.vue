@@ -160,7 +160,7 @@ function toggleCompleted(habitTitle: string) {
 
 
   <div class="habits-list">
-    <h1 style="text-align: center;">Current week</h1>
+    <h1 style="text-align: center; color: black;">Current week</h1>
     <CurrentWeek @update-day-selected="handleSelectedDate" :selectedDate="selectedDate" />
     <br />
 
@@ -272,6 +272,7 @@ function toggleCompleted(habitTitle: string) {
   width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   text-align: center;
+  color: black;
 }
 
 .modal h3 {

@@ -60,13 +60,13 @@ const handleToggleCompletion = (habitTitle: string) => {
 <template>
   <div class="calendar-view">
     <div class="calendar-header">
-      <h1>Pick a Date</h1>
+      <h1 style="color: black;">Pick a Date</h1>
       <VueDatePicker v-model="selectedDate" @update:model-value="handleDateSelected" placeholder="Pick a Date"
         :format="format" class="date-picker" />
     </div>
 
     <div class="habits-list" v-if="isFutureDate">
-      <h2 style="text-align: center;">Habits for {{ selectedDate }}</h2>
+      <h2 style="text-align: center; color: black;">Habits for {{ selectedDate }}</h2>
       <ul v-if="habitsForSelectedDate.length">
         <li v-for="habit in habitsForSelectedDate" :key="habit.title" class="habit-item">
           <span>{{ habit.title }}</span>
@@ -77,7 +77,7 @@ const handleToggleCompletion = (habitTitle: string) => {
     </div>
 
     <div class="habits-list" v-else>
-      <h2 style="text-align: center;">Habits on {{ selectedDate }}</h2>
+      <h2 style="text-align: center; color: black;">Habits on {{ selectedDate }}</h2>
       <ul v-if="habitsForSelectedDate.length">
         <li v-for="habit in habitsForSelectedDate" :key="habit.title" class="habit-item">
           <span>{{ habit.title }}</span>

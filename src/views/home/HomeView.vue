@@ -180,6 +180,7 @@ function checkUserName() {
   width: 100%;
   max-width: 400px;
   text-align: center;
+  color: black;
 }
 
 .modal h3 {
