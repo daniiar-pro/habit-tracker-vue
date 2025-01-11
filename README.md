@@ -1,49 +1,62 @@
-# habit-tracking
+# Habit Tracker App
 
-This template should help get you started developing with Vue 3 in Vite.
+A sleek and efficient **Habit Tracker App** built using **Vue 3**, **TypeScript**, and **Vite**. This app is designed to help users track, manage, and improve their daily habits with ease.
 
-## Recommended IDE Setup
+Try it live: [Habit Tracker App](https://daniiar-pro.github.io/habit-tracker-vue/)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Customize configuration
+## Features
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. **Add, Edit, Stop and Delete Habits**
+   - Easily create new habits to track.
+   - Update habit details or remove habits as needed.
+
+2. **Habit Management**
+   - View habits across past and future dates.
+   - Mark habits as completed, skipped, or stopped.
+
+3. **Data Persistence**
+   - Habits and their statuses are stored in **localStorage**, ensuring data remains available even after refreshing the browser.
+
+4. **Built with Modern Tools**
+   - **Vue 3** for a reactive user interface.
+   - **TypeScript** for type-safe code.
+   - **Vite** for fast development and optimized builds.
+
+5. **Testing**
+   - Unit testing with **Vitest**.
+   - End-to-End (E2E) testing with **Playwright**.
+
+---
+## Technologies Used:
+-	**Vue 3**: For building the user interface.
+-	**TypeScript**: Ensuring robust and type-safe code.
+-	**Vite**: For fast builds and efficient development.
+-	**Vitest**: Unit testing framework.
+-	**Playwright**: For comprehensive end-to-end testing.
+-	**localStorage**: For persisting user data.
 
 ## Project Setup
 
-```sh
-npm install
-```
+### Option 1: Clone the Repository
 
-### Compile and Hot-Reload for Development
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/daniiar-pro/habit-tracker-vue.git
+2. Install packages:
+   ```sh
+   npm install
+3. Start the app:
+   ```sh
+   npm run dev
+   
+## Contributions
 
-```sh
-npm run dev
-```
+Contributions are welcome! If you'd like to improve this project, feel free to:
 
-### Compile and Minify for Production
+1. Fork the repository.
+2. Make your changes.
+3. Submit a pull request.
 
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
-
-
-## Testing the App
-
-1. Run Unit tests
-```
-npm run test:unit
-```
-
-### When E2E tests are running, follow the app's requirements which pops up, to see E2E tests fully (fill input and navigate to Habits page, repeat it until tests finish)
-2. Run E2E tests
-```
-npm run test:e2e:headed
-```
+---
